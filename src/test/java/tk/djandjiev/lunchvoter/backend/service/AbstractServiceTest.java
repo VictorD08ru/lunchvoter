@@ -14,7 +14,7 @@ import static tk.djandjiev.lunchvoter.backend.util.ValidationUtil.getRootCause;
 @SpringJUnitConfig(locations = {
         "classpath:spring/spring-app.xml",
         "classpath:spring/spring-db.xml",
-        "classpath:spring/spring-test.xml"
+        "classpath:spring/spring-mvc.xml"
 })
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 @ExtendWith(TimingExtension.class)

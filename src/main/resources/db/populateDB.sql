@@ -6,6 +6,7 @@ DELETE FROM users;
 
 ALTER SEQUENCE global_seq RESTART WITH 10000;
 
+--{noop} for unsafe passwords in storage
 INSERT INTO users (name, email, password) VALUES
   ('User0', 'user0@yandex.ru', '{noop}password0'),
   ('User1', 'user1@yandex.ru', '{noop}password1'),

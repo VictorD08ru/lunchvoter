@@ -23,6 +23,7 @@
           p:url="${database.url}"
           p:username="${database.username}"
           p:password="${database.password}"/>
+
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
           p:dataSource-ref="dataSource"
           p:packagesToScan="tk.djandjiev.lunchvoter.backend.model">
@@ -32,7 +33,7 @@
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).FORMAT_SQL}" value="${hibernate.format_sql}"/>
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SQL_COMMENTS}"
                        value="${hibernate.use_sql_comments}"/>
-                <!--<entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_AUTO}" value="${hibernate.hbm2ddl.auto}"/>-->
+                <entry key="#{T(org.hibernate.cfg.AvailableSettings).DIALECT}" value="org.hibernate.dialect.HSQLDialect"/>
 
                 <!--https://github.com/hibernate/hibernate-orm/blob/master/documentation/src/main/asciidoc/userguide/chapters/caching/Caching.adoc#caching-provider-jcache-->
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).CACHE_REGION_FACTORY}"
@@ -42,6 +43,8 @@
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SECOND_LEVEL_CACHE}" value="true"/>
                 <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_QUERY_CACHE}" value="false"/> <!--default-->
 
+                <entry key="javax.persistence.validation.group.pre-persist" value="tk.djandjiev.lunchvoter.backend.View$Persist"/>
+                <entry key="javax.persistence.validation.group.pre-update" value="tk.djandjiev.lunchvoter.backend.View$Persist"/>
             </map>
         </property>
 
@@ -55,6 +58,9 @@
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="entityManagerFactory"/>
 
+    <bean class="tk.djandjiev.lunchvoter.backend.util.JpaUtil"/>
+
+    <context:component-scan base-package="tk.djandjiev.**.repository"/>
     <jpa:repositories base-package="tk.djandjiev.**.repository"/>
 
 </beans>

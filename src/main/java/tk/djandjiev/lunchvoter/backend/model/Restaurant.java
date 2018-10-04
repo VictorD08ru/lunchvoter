@@ -34,6 +34,7 @@ public class Restaurant extends AbstractNamedEntity {
         super(id, name);
         if (menu == null) {
             this.menu = Collections.emptyList();
+            this.votes = Collections.emptyList();
         }
     }
 

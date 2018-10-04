@@ -3,7 +3,6 @@ package tk.djandjiev.lunchvoter.backend.to;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
@@ -16,16 +15,14 @@ public class RestaurantTO extends BaseTO implements Serializable {
     @SafeHtml
     private String name;
 
-    @NotNull
     private List<MenuTO> menu;
 
-    @NotNull
     private List<VoteTO> votes;
 
     public RestaurantTO() {
     }
 
-    public RestaurantTO(Integer id, @NotBlank @Size(min = 2, max = 100) @SafeHtml String name, @NotNull List<MenuTO> menu, @NotNull List<VoteTO> votes) {
+    public RestaurantTO(Integer id, @NotBlank @Size(min = 2, max = 100) @SafeHtml String name, List<MenuTO> menu, List<VoteTO> votes) {
         super(id);
         this.name = name;
         this.menu = menu;
