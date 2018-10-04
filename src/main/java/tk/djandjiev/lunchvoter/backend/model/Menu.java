@@ -4,6 +4,8 @@ package tk.djandjiev.lunchvoter.backend.model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.SafeHtml;
+import tk.djandjiev.lunchvoter.backend.View;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -17,38 +19,35 @@ public class Menu extends AbstractBaseEntity {
 
     @Column(name = "dish", nullable = false, length = 100)
     @NotBlank
+    @SafeHtml(groups = {View.Web.class})
     private String dish;
 
     @Column(name = "price", nullable = false)
     @Range(min = 1, max = 2000_000)
     private int price;
 
-    @Column(name = "enabled", nullable = false, columnDefinition = "boolean default true")
-    private boolean enabled;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
+    @NotNull(groups = View.Persist.class)
     private Restaurant restaurant;
 
     public Menu() {
     }
 
-    public Menu(Integer id, String dish, int price, boolean enabled, Restaurant restaurant) {
+    public Menu(Integer id, String dish, int price, Restaurant restaurant) {
         super(id);
         this.dish = dish;
         this.price = price;
-        this.enabled = enabled;
         this.restaurant = restaurant;
     }
 
-    public Menu(Integer id, String dish, int price, Restaurant restaurant) {
-        this(id, dish, price, true, restaurant);
+    public Menu(String dish, int price) {
+        this(null, dish, price, null);
     }
 
     public Menu(Menu menu) {
-        this(menu.getId(), menu.getDish(), menu.getPrice(), menu.isEnabled(), menu.getRestaurant());
+        this(menu.getId(), menu.getDish(), menu.getPrice(), menu.getRestaurant());
     }
 
     public String getDish() {
@@ -67,14 +66,6 @@ public class Menu extends AbstractBaseEntity {
         this.price = price;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     public Restaurant getRestaurant() {
         return restaurant;
     }
@@ -86,6 +77,7 @@ public class Menu extends AbstractBaseEntity {
     @Override
     public String toString() {
         return "Menu{" +
+                "id=" + id +
                 "dish='" + dish + '\'' +
                 ", price=" + price +
                 '}';

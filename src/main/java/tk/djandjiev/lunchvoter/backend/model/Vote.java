@@ -3,6 +3,7 @@ package tk.djandjiev.lunchvoter.backend.model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
+import tk.djandjiev.lunchvoter.backend.View;
 
 import java.time.LocalDate;
 import javax.persistence.*;
@@ -21,15 +22,15 @@ public class Vote extends AbstractBaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @NotNull
+    @NotNull(groups = View.Persist.class)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Restaurant restaurant;
 
     public Vote() {
+        this.voteDate = LocalDate.now();
     }
 
     public Vote(Integer id, LocalDate voteDate, User user, Restaurant restaurant) {
@@ -41,6 +42,10 @@ public class Vote extends AbstractBaseEntity {
 
     public Vote(Integer id, User user, Restaurant restaurant) {
         this(id, LocalDate.now(), user, restaurant);
+    }
+
+    public Vote(Restaurant restaurant) {
+        this(null, LocalDate.now(), null, restaurant);
     }
 
     public Vote(Vote vote) {
@@ -69,5 +74,14 @@ public class Vote extends AbstractBaseEntity {
 
     public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
+    }
+
+    @Override
+    public String toString() {
+        return "Vote{" +
+                "id=" + id +
+                "voteDate=" + voteDate +
+                ", restaurant=" + getRestaurant().getId() +
+                '}';
     }
 }

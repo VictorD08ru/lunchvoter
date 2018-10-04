@@ -41,7 +41,6 @@ CREATE TABLE menu
   dish				VARCHAR(100)		NOT NULL,
   price				INTEGER					NOT NULL,
   restaurant_id	INTEGER				NOT NULL,
-  enabled			BOOLEAN DEFAULT TRUE    NOT NULL,
   FOREIGN KEY (restaurant_id) REFERENCES restaurants (id) ON DELETE CASCADE,
   CONSTRAINT menu_unique_dish_per_restrnt_idx UNIQUE (dish, restaurant_id)
 );
@@ -53,7 +52,6 @@ CREATE TABLE votes
   user_id			INTEGER					            NOT NULL,
   restaurant_id		INTEGER,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-  FOREIGN KEY (restaurant_id) REFERENCES restaurants (id),
+  FOREIGN KEY (restaurant_id) REFERENCES restaurants (id) ON DELETE SET NULL,
   CONSTRAINT votes_date_user_unique_idx UNIQUE (vote_date, user_id)
---   CONSTRAINT votes_pk PRIMARY KEY (vote_date, user_id)
 );

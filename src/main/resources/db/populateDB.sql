@@ -1,23 +1,23 @@
 DELETE FROM user_roles;
-DELETE FROM VOTES;
-DELETE FROM MENU;
+DELETE FROM votes;
+DELETE FROM menu;
 DELETE FROM restaurants;
 DELETE FROM users;
 
 ALTER SEQUENCE global_seq RESTART WITH 10000;
 
 INSERT INTO users (name, email, password) VALUES
-  ('User0', 'user0@yandex.ru', 'password0'),
-  ('User1', 'user1@yandex.ru', 'password1'),
-  ('User2', 'user2@yandex.ru', 'password2'),
-  ('User3', 'user3@yandex.ru', 'password3'),
-  ('User4', 'user4@yandex.ru', 'password4'),
-  ('User5', 'user5@yandex.ru', 'password5'),
-  ('User6', 'user6@yandex.ru', 'password6'),
-  ('User7', 'user7@yandex.ru', 'password7'),
-  ('User8', 'user8@yandex.ru', 'password8'),
-  ('User9', 'user9@yandex.ru', 'password9'),
-  ('Admin', 'admin@gmail.com', 'admin');
+  ('User0', 'user0@yandex.ru', '{noop}password0'),
+  ('User1', 'user1@yandex.ru', '{noop}password1'),
+  ('User2', 'user2@yandex.ru', '{noop}password2'),
+  ('User3', 'user3@yandex.ru', '{noop}password3'),
+  ('User4', 'user4@yandex.ru', '{noop}password4'),
+  ('User5', 'user5@yandex.ru', '{noop}password5'),
+  ('User6', 'user6@yandex.ru', '{noop}password6'),
+  ('User7', 'user7@yandex.ru', '{noop}password7'),
+  ('User8', 'user8@yandex.ru', '{noop}password8'),
+  ('User9', 'user9@yandex.ru', '{noop}password9'),
+  ('Admin', 'admin@gmail.com', '{noop}admin');
 
 INSERT INTO user_roles (role, user_id) VALUES
   ('ROLE_USER', 10000),
@@ -73,7 +73,7 @@ INSERT INTO menu (dish, price, restaurant_id) VALUES
   ('Двухэтажка', 150, 10015);
 
 INSERT INTO votes (user_id, restaurant_id) VALUES
-  (10000, 10011),
+  (10010, 10015),
   (10001, 10011),
   (10002, 10011),
   (10003, 10011),
@@ -82,5 +82,4 @@ INSERT INTO votes (user_id, restaurant_id) VALUES
   (10006, 10014),
   (10007, 10014),
   (10008, 10014),
-  (10009, 10013),
-  (10010, 10015);
+  (10009, 10013);

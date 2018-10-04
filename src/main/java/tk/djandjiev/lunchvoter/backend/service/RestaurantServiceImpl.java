@@ -2,9 +2,12 @@ package tk.djandjiev.lunchvoter.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import tk.djandjiev.lunchvoter.backend.model.Restaurant;
 import tk.djandjiev.lunchvoter.backend.repository.RestaurantRepository;
+import tk.djandjiev.lunchvoter.backend.to.RestaurantTO;
+import tk.djandjiev.lunchvoter.backend.util.RestaurantUtil;
 import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
 
 import java.util.List;
@@ -12,7 +15,7 @@ import java.util.List;
 import static tk.djandjiev.lunchvoter.backend.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
-public class ReastaurantServiceImpl implements ReastaurantService {
+public class RestaurantServiceImpl implements RestaurantService {
     @Autowired
     private RestaurantRepository repository;
 
@@ -24,7 +27,7 @@ public class ReastaurantServiceImpl implements ReastaurantService {
 
     @Override
     public void delete(int id) {
-        checkNotFoundWithId(repository.delete(id), id);
+        checkNotFoundWithId(repository.delete(id) != 0, id);
     }
 
     @Override
@@ -33,10 +36,12 @@ public class ReastaurantServiceImpl implements ReastaurantService {
                 .orElseThrow(() -> new NotFoundException("Not found entity with id=" + id));
     }
 
+    @Transactional
     @Override
-    public void update(Restaurant r) {
-        Assert.notNull(r, "restaurant must not be null");
-        checkNotFoundWithId(repository.save(r), r.getId());
+    public void update(RestaurantTO restaurantTO) {
+        Assert.notNull(restaurantTO, "restaurant must not be null");
+        Restaurant r = RestaurantUtil.updateFromTo(get(restaurantTO.getId()), restaurantTO);
+        checkNotFoundWithId(repository.save(r), restaurantTO.getId());
     }
 
     @Override

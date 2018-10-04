@@ -26,14 +26,15 @@
         <logback.version>1.2.3</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
 
-        <!--DB-->
-        <postgresql.version>42.2.2</postgresql.version>
         <!--    Tests  -->
         <junit.jupiter.version>5.3.1</junit.jupiter.version>
         <junit.platform.version>1.2.0</junit.platform.version>
         <hamcrest.version>1.3</hamcrest.version>
         <jsonassert.version>1.5.0</jsonassert.version>
         <json-path.version>2.4.0</json-path.version>
+
+        <!--DBMS-->
+        <hsqldb.version>2.4.1</hsqldb.version>
 
         <!-- Hibernate -->
         <hibernate.version>5.3.6.Final</hibernate.version>
@@ -42,7 +43,7 @@
         <javax-el.version>3.0.1-b10</javax-el.version>
 
         <!--Tools-->
-        <ehcache.version>3.5.2</ehcache.version>
+        <ehcache.version>3.6.1</ehcache.version>
 
         <!--webjars-->
         <webjars-bootstrap.version>4.1.3</webjars-bootstrap.version>
@@ -136,6 +137,12 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <!--DB-->
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
+        </dependency>
         <!--- ORM -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -247,14 +254,14 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>3.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

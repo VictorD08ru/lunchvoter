@@ -5,15 +5,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import tk.djandjiev.lunchvoter.backend.model.Restaurant;
+import tk.djandjiev.lunchvoter.backend.model.User;
 import tk.djandjiev.lunchvoter.backend.model.Vote;
 import tk.djandjiev.lunchvoter.backend.repository.RestaurantRepository;
 import tk.djandjiev.lunchvoter.backend.repository.UserRepository;
 import tk.djandjiev.lunchvoter.backend.repository.VoteRepository;
+import tk.djandjiev.lunchvoter.backend.to.VoteTO;
+import tk.djandjiev.lunchvoter.backend.util.VoteUtil;
 import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static tk.djandjiev.lunchvoter.backend.util.ValidationUtil.checkNotFoundWithId;
 
@@ -30,16 +31,17 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public Vote create(Vote vote, int userId, int restaurantId) {
-        Assert.notNull(vote,"vote must not be null");
-        vote.setRestaurant(restaurantRepository.getOne(restaurantId));
+    public Vote create(VoteTO voteTO, int userId) {
+        Assert.notNull(voteTO,"vote must not be null");
+        Vote vote = VoteUtil.createNewFromTo(voteTO);
         vote.setUser(userRepository.getOne(userId));
+        vote.setRestaurant(restaurantRepository.getOne(voteTO.getRestaurantId()));
         return voteRepository.save(vote);
     }
 
     @Override
     public void delete(int id, int userId) {
-        checkNotFoundWithId(voteRepository.delete(id, userId), id);
+        checkNotFoundWithId(voteRepository.delete(id, userId) != 0, id);
     }
 
     @Override
@@ -50,21 +52,17 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional
-    public void update(Vote vote, int userId, int restaurantId) {
-        Assert.notNull(vote,"vote must not be null");
-        vote.setRestaurant(restaurantRepository.getOne(restaurantId));
-        vote.setUser(userRepository.getOne(userId));
-        checkNotFoundWithId(voteRepository.save(vote), vote.getId());
+    public void update(VoteTO voteTO, int userId) {
+        Assert.notNull(voteTO,"voteTO must not be null");
+        User user = userRepository.getOne(userId);
+        checkNotFoundWithId(voteTO, voteTO.getId());
+        Restaurant r = restaurantRepository.getOne(voteTO.getRestaurantId());
+        Vote vote = new Vote(voteTO.getId(), voteTO.getVoteDate(), user, r);
+        voteRepository.save(vote);
     }
 
     @Override
-    public Map<Restaurant, Long> getAll(int restaurantId) {
-        return voteRepository.getAll().stream()
-                .collect(Collectors.groupingByConcurrent(Vote::getRestaurant, Collectors.counting()));
-    }
-
-    @Override
-    public List<Vote> getAllForRestaurant(int restaurantId) {
+    public List<Vote> getAll(int restaurantId) {
         return voteRepository.getAllForRestaurant(restaurantId);
     }
 }

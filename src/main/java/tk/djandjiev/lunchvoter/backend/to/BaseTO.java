@@ -2,13 +2,13 @@ package tk.djandjiev.lunchvoter.backend.to;
 
 import tk.djandjiev.lunchvoter.backend.HasId;
 
-public abstract class BaseTo implements HasId {
+public abstract class BaseTO implements HasId {
     protected Integer id;
 
-    public BaseTo() {
+    public BaseTO() {
     }
 
-    public BaseTo(Integer id) {
+    public BaseTO(Integer id) {
         this.id = id;
     }
 

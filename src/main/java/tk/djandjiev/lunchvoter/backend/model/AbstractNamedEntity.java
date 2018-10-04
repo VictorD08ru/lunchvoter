@@ -1,6 +1,7 @@
 package tk.djandjiev.lunchvoter.backend.model;
 
 import org.hibernate.validator.constraints.SafeHtml;
+import tk.djandjiev.lunchvoter.backend.View;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -14,7 +15,7 @@ public abstract class AbstractNamedEntity extends AbstractBaseEntity {
     @NotBlank
     @Size(min = 2, max = 100)
     @Column(name = "name", nullable = false)
-//    @SafeHtml(groups = {View.Web.class})
+    @SafeHtml(groups = {View.Web.class})
     protected String name;
 
     protected AbstractNamedEntity() {

@@ -1,6 +1,5 @@
 package tk.djandjiev.lunchvoter.backend.repository;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +26,4 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
     Optional<Menu> findById(Integer id);
 
     List<Menu> findAllByRestaurantId(Integer restaurantId);
-
-    List<Menu> findAllByRestaurantIdAndEnabledIsTrue(Integer restaurantId);
 }

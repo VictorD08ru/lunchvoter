@@ -1,8 +1,8 @@
 package tk.djandjiev.lunchvoter.backend.service;
 
 import tk.djandjiev.lunchvoter.backend.model.User;
-import tk.djandjiev.lunchvoter.backend.to.UserTo;
-import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
+import tk.djandjiev.lunchvoter.backend.to.UserTO;
+import tk.djandjiev.lunchvoter.backend.util.exception.ApplicationException;
 
 import java.util.List;
 
@@ -10,15 +10,15 @@ public interface UserService {
 
     User create(User user);
 
-    void delete(int id) throws NotFoundException;
+    void delete(int id) throws ApplicationException;
 
-    User get(int id) throws NotFoundException;
+    User get(int id) throws ApplicationException;
 
-    User getByEmail(String email) throws NotFoundException;
+    User getByEmail(String email) throws ApplicationException;
 
     void update(User user);
 
-    void update(UserTo user);
+    void update(UserTO user);
 
     List<User> getAll();
 

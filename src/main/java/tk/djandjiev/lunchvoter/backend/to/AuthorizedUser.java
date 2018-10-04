@@ -1,13 +1,12 @@
-package tk.djandjiev.lunchvoter.backend;
+package tk.djandjiev.lunchvoter.backend.to;
 
 import tk.djandjiev.lunchvoter.backend.model.User;
-import tk.djandjiev.lunchvoter.backend.to.UserTo;
 import tk.djandjiev.lunchvoter.backend.util.UserUtil;
 
 public class AuthorizedUser extends org.springframework.security.core.userdetails.User {
     private static final long serialVersionUID = 1L;
 
-    private UserTo userTo;
+    private UserTO userTo;
 
     public AuthorizedUser(User user) {
         super(user.getEmail(), user.getPassword(), user.isEnabled(), true, true, true, user.getRoles());
@@ -18,11 +17,11 @@ public class AuthorizedUser extends org.springframework.security.core.userdetail
         return userTo.getId();
     }
 
-    public void update(UserTo newTo) {
+    public void update(UserTO newTo) {
         userTo = newTo;
     }
 
-    public UserTo getUserTo() {
+    public UserTO getUserTo() {
         return userTo;
     }
 

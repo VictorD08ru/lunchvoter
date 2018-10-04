@@ -1,15 +1,13 @@
 package tk.djandjiev.lunchvoter.backend.to;
 
-import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-public class UserTo extends BaseTo implements Serializable {
+public class UserTO extends BaseTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
@@ -26,10 +24,10 @@ public class UserTo extends BaseTo implements Serializable {
     @Size(min = 5, max = 32)
     private String password;
 
-    public UserTo() {
+    public UserTO() {
     }
 
-    public UserTo(Integer id, String name, String email, String password) {
+    public UserTO(Integer id, String name, String email, String password) {
         super(id);
         this.name = name;
         this.email = email;
@@ -62,7 +60,7 @@ public class UserTo extends BaseTo implements Serializable {
 
     @Override
     public String toString() {
-        return "UserTo{" +
+        return "UserTO{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
