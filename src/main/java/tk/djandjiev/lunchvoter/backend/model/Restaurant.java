@@ -13,7 +13,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "restaurants", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name"}, name = "restaurants_unique_name_idx")
+        @UniqueConstraint(columnNames = "name", name = "restaurants_unique_name_idx")
 })
 public class Restaurant extends AbstractNamedEntity {
 
@@ -34,6 +34,8 @@ public class Restaurant extends AbstractNamedEntity {
         super(id, name);
         if (menu == null) {
             this.menu = Collections.emptyList();
+        }
+        if (votes == null) {
             this.votes = Collections.emptyList();
         }
     }
@@ -42,9 +44,6 @@ public class Restaurant extends AbstractNamedEntity {
         super(id, name);
         this.menu = menu;
         this.votes = votes;
-    }
-    public Restaurant(String name) {
-        this(null, name);
     }
 
     public Restaurant(Restaurant r) {

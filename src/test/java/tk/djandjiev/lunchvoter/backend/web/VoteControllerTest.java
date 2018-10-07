@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static tk.djandjiev.lunchvoter.backend.util.TestUtil.readFromJson;
 import static tk.djandjiev.lunchvoter.backend.util.TestUtil.userAuth;
+import static tk.djandjiev.lunchvoter.backend.util.TestUtil.userHttpBasic;
 import static tk.djandjiev.lunchvoter.backend.util.UserTestData.*;
 import static tk.djandjiev.lunchvoter.backend.util.VoteTestData.*;
 
@@ -48,22 +49,22 @@ class VoteControllerTest extends AbstractControllerTest {
     void testUpdate() throws Exception {
         Vote updated = new Vote(VOTE2);
         updated.setRestaurant(RestaurantTestData.RESTAURANT13);
-        VoteTO updatedTO = VoteUtil.asTo(updated);
+        VoteTO updatedTO = VoteUtil.getTO(updated);
 
-        TestUtil.print(mockMvc.perform(put(REST_URL + VOTE2_ID)
+        TestUtil.print(mockMvc.perform(put(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(updatedTO))
                 .with(userAuth(USER1)))
                 .andExpect(status().isNoContent()));
 
-        assertMatch(voteService.get(VOTE2_ID, USER1_ID), updated);
+        assertMatch(voteService.get(USER1_ID), updated);
     }
 
     @Test
     void testCreate() throws Exception {
         VoteTO voteTO = new VoteTO(null, LocalDate.now(), RestaurantTestData.RESTAURANT13_ID);
         Vote vote = getCreated();
-        ResultActions action = TestUtil.print(mockMvc.perform(post("/profile/votes")
+        ResultActions action = TestUtil.print(mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(voteTO))
                 .with(userAuth(USER0)))
@@ -80,12 +81,28 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     void testGet() throws Exception {
-        mockMvc.perform(get(REST_URL + VOTE1_ID)
+        mockMvc.perform(get(REST_URL)
                 .with(userAuth(ADMIN)))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(TestUtil.contentJson(VoteUtil.asTo(VOTE1)));
+                .andExpect(TestUtil.contentJson(VoteUtil.getTO(VOTE1)));
+    }
+
+    @Test
+    void testGetNotFound() throws Exception {
+        mockMvc.perform(get(REST_URL)
+                .with(userHttpBasic(USER0)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity());
+    }
+
+    @Test
+    void testDeleteNotFound() throws Exception {
+        mockMvc.perform(delete(REST_URL + 1)
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print());
     }
 
     @Test

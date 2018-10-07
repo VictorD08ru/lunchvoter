@@ -3,6 +3,7 @@ package tk.djandjiev.lunchvoter.backend.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import tk.djandjiev.lunchvoter.backend.model.Restaurant;
 import tk.djandjiev.lunchvoter.backend.to.RestaurantTO;
 import tk.djandjiev.lunchvoter.backend.util.RestaurantUtil;
@@ -21,13 +22,19 @@ class RestaurantServiceTest extends AbstractServiceTest {
 
     @Test
     void create() throws Exception {
-        Restaurant restaurant = new Restaurant("Я новый ресторан");
+        Restaurant restaurant = new Restaurant(null,"Я новый ресторан");
         Restaurant created = rService.create(restaurant);
         restaurant.setId(created.getId());
         List<Restaurant> expected = new ArrayList<>(RESTAURANTS);
         expected.add(restaurant);
         assertMatch(created, restaurant);
         assertMatch(rService.getAll(), expected);
+    }
+
+    @Test
+    void createDuplicate() throws Exception {
+        assertThrows(DataAccessException.class, () ->
+                rService.create(new Restaurant(null,"Shaverma Cafe")));
     }
 
     @Test
@@ -55,7 +62,7 @@ class RestaurantServiceTest extends AbstractServiceTest {
 
     @Test
     void update() throws Exception {
-        RestaurantTO updated = RestaurantUtil.asTo(RESTAURANT11);
+        RestaurantTO updated = RestaurantUtil.getTO(RESTAURANT11);
         updated.setName("Столовая №6");
         Restaurant r = RestaurantUtil.updateFromTo(new Restaurant(RESTAURANT11), updated);
         rService.update(updated);

@@ -2,7 +2,6 @@ package tk.djandjiev.lunchvoter.backend.web.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.djandjiev.lunchvoter.backend.model.User;
@@ -14,7 +13,6 @@ import tk.djandjiev.lunchvoter.backend.util.exception.ErrorType;
 import tk.djandjiev.lunchvoter.backend.web.AbstractControllerTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,7 +58,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isNoContent());
 
-        assertMatch(userService.getByEmail("newemail@ya.ru"), UserUtil.updateFromTo(new User(USER5), updatedTo));
+        assertMatch(userService.getByEmail("newemail@ya.ru"), UserUtil.updateFromTO(new User(USER5), updatedTo));
     }
 
     @Test

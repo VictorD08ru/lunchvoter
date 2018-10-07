@@ -11,7 +11,7 @@ public class MenuUtil {
 
     private MenuUtil() {}
 
-    public static MenuTO asTo(Menu menu) {
+    public static MenuTO getTO(Menu menu) {
         return new MenuTO(menu.getId(), menu.getDish(), menu.getPrice());
     }
 
@@ -22,6 +22,6 @@ public class MenuUtil {
     }
 
     public static List<MenuTO> getTOList (Collection<Menu> menuList) {
-        return menuList.stream().map(MenuUtil::asTo).collect(Collectors.toList());
+        return menuList.stream().map(MenuUtil::getTO).collect(Collectors.toList());
     }
 }

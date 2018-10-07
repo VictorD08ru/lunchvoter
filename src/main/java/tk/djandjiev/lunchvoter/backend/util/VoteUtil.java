@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
 public class VoteUtil {
     private VoteUtil() {}
 
-    public static Vote createNewFromTo(VoteTO voteTO) {
+    public static Vote createNewFromTO(VoteTO voteTO) {
         return new Vote(voteTO.getId(), voteTO.getVoteDate(), null, null);
     }
 
-    public static VoteTO asTo(Vote vote) {
+    public static VoteTO getTO(Vote vote) {
         return new VoteTO(vote.getId(), vote.getVoteDate(), vote.getRestaurant().getId());
     }
 
     public static List<VoteTO> getTOList (Collection<Vote> votes) {
-        return votes.stream().filter(v -> LocalDate.now().equals(v.getVoteDate())).map(VoteUtil::asTo).collect(Collectors.toList());
+        return votes.stream().filter(v -> LocalDate.now().equals(v.getVoteDate())).map(VoteUtil::getTO).collect(Collectors.toList());
     }
 }

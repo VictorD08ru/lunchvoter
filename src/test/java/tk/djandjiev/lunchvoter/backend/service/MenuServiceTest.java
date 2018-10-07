@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.dao.DataAccessException;
 import tk.djandjiev.lunchvoter.backend.model.Menu;
 import tk.djandjiev.lunchvoter.backend.to.MenuTO;
 import tk.djandjiev.lunchvoter.backend.util.JpaUtil;
@@ -35,6 +36,12 @@ class MenuServiceTest extends AbstractServiceTest {
         if (jpaUtil == null) {
             jpaUtil.clear2ndLevelHibernateCache();
         }
+    }
+
+    @Test
+    void createDuplicate() throws Exception {
+        assertThrows(DataAccessException.class, () ->
+                menuService.create(new Menu("Борщ", 250), RESTAURANT11_ID));
     }
 
     @Test
@@ -72,7 +79,7 @@ class MenuServiceTest extends AbstractServiceTest {
 
     @Test
     void update() throws Exception {
-        MenuTO updated = MenuUtil.asTo(R13_MENU1);
+        MenuTO updated = MenuUtil.getTO(R13_MENU1);
         updated.setDish("Tiny mac");
         updated.setPrice(240);
         Menu menu = MenuUtil.updateFromTo(new Menu(R13_MENU1), updated);

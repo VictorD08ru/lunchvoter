@@ -23,9 +23,11 @@ import java.net.URI;
 import java.time.LocalTime;
 
 @RestController
-@RequestMapping(value = "/profile/votes", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+@RequestMapping(value = VoteController.VOTE_URL, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 public class VoteController {
     private final Logger log = LoggerFactory.getLogger(getClass());
+
+    static final String VOTE_URL = "/profile/votes";
 
     @Autowired
     private VoteService voteService;
@@ -66,10 +68,10 @@ public class VoteController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
-    @GetMapping("/{id}")
-    public VoteTO get(@PathVariable("id") int id) {
+    @GetMapping
+    public VoteTO get() {
         int userId = SecurityUtil.authUserId();
-        log.info("get vote {}", id);
-        return VoteUtil.asTo(voteService.get(id, userId));
+        log.info("get user's {} vote", userId);
+        return VoteUtil.getTO(voteService.get(userId));
     }
 }

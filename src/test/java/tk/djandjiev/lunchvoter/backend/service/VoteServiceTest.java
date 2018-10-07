@@ -9,6 +9,7 @@ import tk.djandjiev.lunchvoter.backend.model.Vote;
 import tk.djandjiev.lunchvoter.backend.util.RestaurantTestData;
 import tk.djandjiev.lunchvoter.backend.util.VoteUtil;
 import tk.djandjiev.lunchvoter.backend.util.exception.ApplicationException;
+import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -62,28 +63,23 @@ class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void get() throws Exception {
-        assertMatch(voteService.get(VOTE1_ID, ADMIN_ID), VOTE1);
+        assertMatch(voteService.get(ADMIN_ID), VOTE1);
     }
 
     @Test
     void getNotFound() throws Exception {
-        Assertions.assertThrows(ApplicationException.class, () -> voteService.get(1, 2));
-    }
-
-    @Test
-    void getNotActualUser() throws Exception {
-        Assertions.assertThrows(ApplicationException.class, () -> voteService.get(VOTE1_ID, USER0_ID));
+        Assertions.assertThrows(NotFoundException.class, () -> voteService.get(USER0_ID));
     }
 
     @Test
     void update() throws Exception {
         assertMatch(voteService.getAll(RestaurantTestData.RESTAURANT15_ID),
                 getVotesForRestaurant(VOTES, RestaurantTestData.RESTAURANT15_ID));
-        VoteTO updated = VoteUtil.asTo(VOTE1);
+        VoteTO updated = VoteUtil.getTO(VOTE1);
         updated.setRestaurantId(RestaurantTestData.RESTAURANT13_ID);
         voteService.update(updated, ADMIN_ID);
         List<Vote> votes = new ArrayList<>(VOTES);
-        Vote vote = VoteUtil.createNewFromTo(updated);
+        Vote vote = VoteUtil.createNewFromTO(updated);
         vote.setRestaurant(RestaurantTestData.RESTAURANT13);
         votes.set(0, vote);
         assertMatch(voteService.getAll(RestaurantTestData.RESTAURANT13_ID), VOTE10, vote);

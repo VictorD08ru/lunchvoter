@@ -5,7 +5,6 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.List;
 
 public class RestaurantTO extends BaseTO implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -15,18 +14,12 @@ public class RestaurantTO extends BaseTO implements Serializable {
     @SafeHtml
     private String name;
 
-    private List<MenuTO> menu;
-
-    private List<VoteTO> votes;
-
     public RestaurantTO() {
     }
 
-    public RestaurantTO(Integer id, @NotBlank @Size(min = 2, max = 100) @SafeHtml String name, List<MenuTO> menu, List<VoteTO> votes) {
+    public RestaurantTO(Integer id, @NotBlank @Size(min = 2, max = 100) @SafeHtml String name) {
         super(id);
         this.name = name;
-        this.menu = menu;
-        this.votes = votes;
     }
 
     public String getName() {
@@ -35,21 +28,5 @@ public class RestaurantTO extends BaseTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public List<MenuTO> getMenu() {
-        return menu;
-    }
-
-    public void setMenu(List<MenuTO> menu) {
-        this.menu = menu;
-    }
-
-    public List<VoteTO> getVotes() {
-        return votes;
-    }
-
-    public void setVotes(List<VoteTO> votes) {
-        this.votes = votes;
     }
 }

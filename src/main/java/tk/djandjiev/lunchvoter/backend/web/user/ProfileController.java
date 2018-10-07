@@ -33,7 +33,7 @@ public class ProfileController extends AbstractUserController {
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseStatus(value = HttpStatus.CREATED)
     public ResponseEntity<User> register(@Valid @RequestBody UserTO userTo) {
-        User created = super.create(UserUtil.createNewFromTo(userTo));
+        User created = super.create(UserUtil.createNewFromTO(userTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();

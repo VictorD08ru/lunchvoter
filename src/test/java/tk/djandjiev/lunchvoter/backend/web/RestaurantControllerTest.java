@@ -4,12 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import tk.djandjiev.lunchvoter.backend.model.Menu;
 import tk.djandjiev.lunchvoter.backend.model.Restaurant;
-import tk.djandjiev.lunchvoter.backend.service.MenuService;
 import tk.djandjiev.lunchvoter.backend.service.RestaurantService;
 import tk.djandjiev.lunchvoter.backend.service.VoteService;
-import tk.djandjiev.lunchvoter.backend.to.MenuTO;
 import tk.djandjiev.lunchvoter.backend.to.RestaurantTO;
 import tk.djandjiev.lunchvoter.backend.util.*;
 
@@ -23,16 +20,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static tk.djandjiev.lunchvoter.backend.util.RestaurantTestData.*;
 import static tk.djandjiev.lunchvoter.backend.util.TestUtil.readFromJson;
 import static tk.djandjiev.lunchvoter.backend.util.TestUtil.userAuth;
-import static tk.djandjiev.lunchvoter.backend.util.UserTestData.*;
+import static tk.djandjiev.lunchvoter.backend.util.TestUtil.userHttpBasic;
+import static tk.djandjiev.lunchvoter.backend.util.UserTestData.ADMIN;
+import static tk.djandjiev.lunchvoter.backend.util.UserTestData.USER1;
 
 class RestaurantControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = "/restaurants/";
+    static final String REST_URL = RestaurantController.RESTAURANT_URL + "/";
 
     @Autowired
     private RestaurantService rService;
-
-    @Autowired
-    private MenuService menuService;
 
     @Autowired
     private VoteService voteService;
@@ -43,16 +39,16 @@ class RestaurantControllerTest extends AbstractControllerTest {
                 .with(userAuth(USER1)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(contentJson(RESTAURANT11)));
+                .andExpect(TestUtil.contentJson(RestaurantUtil.getTO(RESTAURANT11))));
     }
 
     @Test
     void testGetAll() throws Exception {
         TestUtil.print(mockMvc.perform(get(REST_URL)
-                .with(userAuth(USER0)))
+                .with(userAuth(USER1)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(contentJson(RESTAURANTS)));
+                .andExpect(TestUtil.contentJson(RestaurantUtil.getTOList(RESTAURANTS))));
     }
 
     @Test
@@ -70,7 +66,7 @@ class RestaurantControllerTest extends AbstractControllerTest {
     void testUpdate() throws Exception {
         Restaurant updated = new Restaurant(RESTAURANT11);
         updated.setName("Столовая №6");
-        RestaurantTO updatedTO = RestaurantUtil.asTo(updated);
+        RestaurantTO updatedTO = RestaurantUtil.getTO(updated);
 
         TestUtil.print(mockMvc.perform(put(REST_URL + RESTAURANT11_ID)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -83,11 +79,12 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        Restaurant created = new Restaurant("Я новый ресторан");
+        Restaurant created = new Restaurant(null,"Я новый ресторан");
+        RestaurantTO createdTO = RestaurantUtil.getTO(created);
 
         ResultActions action = TestUtil.print(mockMvc.perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.writeValue(created))
+                .content(JsonUtil.writeValue(createdTO))
                 .with(userAuth(ADMIN)))
                 .andExpect(status().isCreated()));
 
@@ -100,66 +97,36 @@ class RestaurantControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void testDeleteMenuItem() throws Exception {
-        mockMvc.perform(delete(REST_URL + RESTAURANT15_ID + "/menu/" + MenuTestData.R15_MENU1_ID)
-                .with(userAuth(ADMIN)))
+    void testGetNotFound() throws Exception {
+        mockMvc.perform(get(REST_URL + 1)
+                .with(userHttpBasic(USER1)))
                 .andDo(print())
-                .andExpect(status().isNoContent());
-        List<Menu> menuList = new ArrayList<>(MenuTestData.R15_MENU);
-        menuList.remove(MenuTestData.R15_MENU1);
-        MenuTestData.assertMatch(menuService.getAll(RESTAURANT15_ID), menuList);
+                .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
-    void testUpdateMenuItem() throws Exception {
-        MenuTO updatedTO = MenuUtil.asTo(MenuTestData.R13_MENU1);
-        updatedTO.setDish("Tiny mac");
-        updatedTO.setPrice(240);
-        Menu updated = MenuUtil.updateFromTo(new Menu(MenuTestData.R13_MENU1), updatedTO);
+    void testDeleteNotFound() throws Exception {
+        mockMvc.perform(delete(REST_URL + 1)
+                .with(userHttpBasic(ADMIN)))
+                .andExpect(status().isUnprocessableEntity())
+                .andDo(print());
+    }
 
-        TestUtil.print(mockMvc.perform(put(REST_URL + RESTAURANT13_ID + "/menu/" + MenuTestData.R13_MENU1_ID)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.writeValue(updatedTO))
-                .with(userAuth(ADMIN)))
-                .andExpect(status().isNoContent()));
-
-        MenuTestData.assertMatch(menuService.get(MenuTestData.R13_MENU1_ID), updated);
+    //access denied without admin's role
+    @Test
+    void testAccessDenied() throws Exception {
+        mockMvc.perform(delete(REST_URL + RESTAURANT15_ID)
+                .with(userHttpBasic(USER1)))
+                .andExpect(status().is5xxServerError())
+                .andDo(print());
     }
 
     @Test
-    void testCreateMenuItem() throws Exception {
-        Menu created = new Menu("Вареники", 200);
-
-        ResultActions action = TestUtil.print(mockMvc.perform(post(REST_URL + RESTAURANT11_ID + "/menu")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(JsonUtil.writeValue(created))
-                .with(userAuth(ADMIN)))
-                .andExpect(status().isCreated())
-        );
-
-        Menu returned = readFromJson(action, Menu.class);
-        created.setId(returned.getId());
-        MenuTestData.assertMatch(returned, created);
-        List<Menu> expected = new ArrayList<>(MenuTestData.R11_MENU);
-        expected.add(created);
-        MenuTestData.assertMatch(menuService.getAll(RESTAURANT11_ID), expected);
-    }
-
-    @Test
-    void testGetMenuItem() throws Exception {
-        TestUtil.print(mockMvc.perform(get(REST_URL + RESTAURANT11_ID + "/menu/" + MenuTestData.R11_MENU2_ID)
-                .with(userAuth(USER1)))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(MenuTestData.contentJson(MenuTestData.R11_MENU2)));
-    }
-
-    @Test
-    void testGetFullMenu() throws Exception {
-        TestUtil.print(mockMvc.perform(get(REST_URL + RESTAURANT11_ID + "/menu")
-                .with(userAuth(USER0)))
+    void testGetVotes() throws Exception {
+        TestUtil.print(mockMvc.perform(get(REST_URL + RESTAURANT11_ID + "/votes")
+                .with(userHttpBasic(USER1)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MenuTestData.contentJson(MenuTestData.R11_MENU)));
+                .andExpect(TestUtil.contentJson(VoteUtil.getTOList(voteService.getAll(RESTAURANT11_ID)))));
     }
 }

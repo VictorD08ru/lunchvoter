@@ -19,7 +19,7 @@ import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
 import java.util.List;
 
 import static tk.djandjiev.lunchvoter.backend.util.UserUtil.prepareToSave;
-import static tk.djandjiev.lunchvoter.backend.util.UserUtil.updateFromTo;
+import static tk.djandjiev.lunchvoter.backend.util.UserUtil.updateFromTO;
 import static tk.djandjiev.lunchvoter.backend.util.ValidationUtil.*;
 
 
@@ -79,7 +79,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public void update(UserTO userTo) {
-        User user = updateFromTo(get(userTo.getId()), userTo);
+        User user = updateFromTO(get(userTo.getId()), userTo);
         repository.save(prepareToSave(user, passwordEncoder));
     }
 

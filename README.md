@@ -33,14 +33,20 @@ user9@yandex.ru:password9`
 Create field in your OS environment (or profile file) named 'LUNCHVOTER_ROOT' which value path from root to this project's directory (for example, "$HOME/projects/lunchvoter" or "C:/projects/lunchvoter").
 DBMS and logging depend on LUNCHVOTER_ROOT.
 
+###CURL requests
+Ilf you are Windows user, please use bash console (like Git bash)
 
-**User1 get his profile**
+**User1 gets his profile**
 
 `curl -v -u user1@yandex.ru:password1 http://localhost:8080/lunchvoter/profile`
 
-**User2 delete himself**
+**User2 deletes himself**
 
 `curl -v -X DELETE -u user2@yandex.ru:password2 http://localhost:8080/lunchvoter/profile`
+
+**User7 updates himself**
+
+`curl -v -X PUT -d '{"name":"updUser7", "email":"seventh@mail.ru", "password":"updated"}'  -H 'Content-Type:application/json;charset=UTF-8' -u user7@yandex.ru:password7 http://localhost:8080/lunchvoter/profile`
 
 **Admin gets all users**
 
@@ -56,13 +62,13 @@ DBMS and logging depend on LUNCHVOTER_ROOT.
 
 **Admin updates User4**
 
-`curl -v -X PUT -d '{"name":"updUser", "email":"updated@mail.ru", "password":"updated", "roles":["ROLE_USER"]}'  -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin  http://localhost:8080/lunchvoter/admin/users/10004`
+`curl -v -X PUT -d '{"name":"updUser", "email":"updated@mail.ru", "password":"updated", "roles":["ROLE_USER"]}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin  http://localhost:8080/lunchvoter/admin/users/10004`
 
 **Admin deletes User5**
 
 `curl -v -X DELETE -u admin@gmail.com:admin  http://localhost:8080/lunchvoter/admin/users/10005`
 
-**Any user can get all restraunts**
+**Any user can get all restaurants**
 
 `curl -v -u user1@yandex.ru:password1 http://localhost:8080/lunchvoter/restaurants`
 
@@ -73,3 +79,53 @@ DBMS and logging depend on LUNCHVOTER_ROOT.
 **Admin can delete any restaurant** 
 
 `curl -v -X DELETE -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10012`
+
+**Admin can update restaurant "Блинная"**
+
+`curl -v -X PUT -d '{"id": 10014, "name": "Terem"}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10014`
+
+**Admin can create restaurant**
+
+`curl -v -X POST -d '{"id": null, "name": "MacDuck"}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants`
+
+**Any user can get votes of restaurant**
+
+`c`
+
+**Any user can get full menu of restaurant**
+
+`curl -v -u user3@yandex.ru:password3 http://localhost:8080/lunchvoter/restaurants/10011/menu`
+
+**Any user can get menu item of restaurant**
+
+`curl -v -u user3@yandex.ru:password3 http://localhost:8080/lunchvoter/restaurants/10011/menu/10016`
+
+**Any user can update menu item of restaurant**
+
+`curl -v -X PUT -d '{"id": 10016, "dish": "Borsch", "price": 175}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10011/menu/10016`
+
+**Admin can create menu item of restaurant**
+
+`curl -v -X POST -d '{"id": null, "dish": "Pelmen", "price": 275}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10011/menu`
+
+**Any user can get his vote today**
+
+`curl -v -u user1@yandex.ru:password1 http://localhost:8080/lunchvoter/profile/votes`
+
+**Any user can delete his vote today**
+
+`curl -v -X DELETE -u user4@yandex.ru:password4 http://localhost:8080/lunchvoter/profile/votes/10045`
+
+**Any user can update his vote today (if now is earlier than 11:00 AM)**
+
+>please put in correct date (today) to field "voteDate"
+
+`curl -v -X PUT -d '{"id": 10042, "voteDate": "2018-10-07", "restaurantId": 10013}' -H 'Content-Type:application/json;charset=UTF-8' -u user1@yandex.ru:password1 http://localhost:8080/lunchvoter/profile/votes/10042`
+
+**Any user can create vote today (vote for restaurant)**
+
+>User0 hasn't voted yet today
+
+>please put in correct date (today) to field "voteDate"
+
+`curl -v -X POST -d '{"id": null, "voteDate": "2018-10-07", "restaurantId": 10013}' -H 'Content-Type:application/json;charset=UTF-8' -u user0@yandex.ru:password0 http://localhost:8080/lunchvoter/profile/votes`

@@ -10,7 +10,7 @@ public interface VoteService {
 
     void delete(int id, int userId);
 
-    Vote get(int id, int userId);
+    Vote get(int userId);
 
     void update(VoteTO voteTO, int userId);
 

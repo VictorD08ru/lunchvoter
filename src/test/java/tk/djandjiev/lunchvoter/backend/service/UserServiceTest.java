@@ -100,7 +100,7 @@ class UserServiceTest extends AbstractServiceTest {
 
     @Test
     void updateWithTo() {
-        UserTO updated = UserUtil.asTo(USER0);
+        UserTO updated = UserUtil.getTO(USER0);
         updated.setName("UpdatedName");
         updated.setEmail("kuku@ya.ru");
         userService.update(updated);
@@ -114,14 +114,6 @@ class UserServiceTest extends AbstractServiceTest {
     void getAll() {
         List<User> all = userService.getAll();
         assertMatch(all, USERS);
-    }
-
-    @Test
-    void enable() {
-        userService.enable(USER0_ID, false);
-        assertFalse(userService.get(USER0_ID).isEnabled());
-        userService.enable(USER0_ID, true);
-        assertTrue(userService.get(USER0_ID).isEnabled());
     }
 
     @Test

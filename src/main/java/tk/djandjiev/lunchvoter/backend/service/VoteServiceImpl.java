@@ -33,7 +33,7 @@ public class VoteServiceImpl implements VoteService {
     @Transactional
     public Vote create(VoteTO voteTO, int userId) {
         Assert.notNull(voteTO,"vote must not be null");
-        Vote vote = VoteUtil.createNewFromTo(voteTO);
+        Vote vote = VoteUtil.createNewFromTO(voteTO);
         vote.setUser(userRepository.getOne(userId));
         vote.setRestaurant(restaurantRepository.getOne(voteTO.getRestaurantId()));
         return voteRepository.save(vote);
@@ -45,9 +45,9 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public Vote get(int id, int userId) {
-        return voteRepository.get(id, userId)
-                .orElseThrow(() -> new NotFoundException("Not found entity with id=" + id));
+    public Vote get(int userId) {
+        return voteRepository.get(userId)
+                .orElseThrow(() -> new NotFoundException(Integer.toString(userId)));
     }
 
     @Override

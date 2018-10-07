@@ -1,16 +1,12 @@
 package tk.djandjiev.lunchvoter.backend.util;
 
-import org.springframework.test.web.servlet.ResultMatcher;
 import tk.djandjiev.lunchvoter.backend.model.Restaurant;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static tk.djandjiev.lunchvoter.backend.model.AbstractBaseEntity.START_SEQ;
-import static tk.djandjiev.lunchvoter.backend.util.JsonUtil.writeIgnoreProps;
 
 public class RestaurantTestData {
     public static final int RESTAURANT11_ID = START_SEQ + 11;
@@ -37,13 +33,5 @@ public class RestaurantTestData {
 
     public static void assertMatch(Iterable<Restaurant> actual, Restaurant... expected) {
         assertMatch(actual, Arrays.asList(expected));
-    }
-
-    public static ResultMatcher contentJson(Restaurant expected) {
-        return content().json(writeIgnoreProps(expected, "menu", "votes"));
-    }
-
-    public static ResultMatcher contentJson(Collection<Restaurant> expected) {
-        return content().json(writeIgnoreProps(expected, "menu", "votes"));
     }
 }

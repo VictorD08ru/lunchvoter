@@ -9,15 +9,15 @@ import tk.djandjiev.lunchvoter.backend.to.UserTO;
 public class UserUtil {
     private UserUtil() {}
 
-    public static User createNewFromTo(UserTO newUser) {
+    public static User createNewFromTO(UserTO newUser) {
         return new User(null, newUser.getName(), newUser.getEmail(), newUser.getPassword(),  Role.ROLE_USER);
     }
 
-    public static UserTO asTo(User user) {
+    public static UserTO getTO(User user) {
         return new UserTO(user.getId(), user.getName(), user.getEmail(), user.getPassword());
     }
 
-    public static User updateFromTo(User user, UserTO userTo) {
+    public static User updateFromTO(User user, UserTO userTo) {
         user.setName(userTo.getName());
         user.setEmail(userTo.getEmail());
         user.setPassword(userTo.getPassword());

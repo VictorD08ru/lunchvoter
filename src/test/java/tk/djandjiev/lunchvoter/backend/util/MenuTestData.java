@@ -1,15 +1,11 @@
 package tk.djandjiev.lunchvoter.backend.util;
 
-import org.springframework.test.web.servlet.ResultMatcher;
 import tk.djandjiev.lunchvoter.backend.model.Menu;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static tk.djandjiev.lunchvoter.backend.util.JsonUtil.writeIgnoreProps;
 import static tk.djandjiev.lunchvoter.backend.util.RestaurantTestData.*;
 import static tk.djandjiev.lunchvoter.backend.model.AbstractBaseEntity.START_SEQ;
 
@@ -82,13 +78,5 @@ public class MenuTestData {
 
     public static void assertMatch(Iterable<Menu> actual, Iterable<Menu> expected) {
         assertThat(actual).usingElementComparatorIgnoringFields("restaurant").isEqualTo(expected);
-    }
-
-    public static ResultMatcher contentJson(Menu expected) {
-        return content().json(writeIgnoreProps(expected, "restaurant"));
-    }
-
-    public static ResultMatcher contentJson(Collection<Menu> expected) {
-        return content().json(writeIgnoreProps(expected, "restaurant"));
     }
 }

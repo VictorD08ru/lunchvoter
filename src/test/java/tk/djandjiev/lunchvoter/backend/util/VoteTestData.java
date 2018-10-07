@@ -1,5 +1,4 @@
 package tk.djandjiev.lunchvoter.backend.util;
-import org.springframework.test.web.servlet.ResultMatcher;
 import tk.djandjiev.lunchvoter.backend.model.Restaurant;
 import tk.djandjiev.lunchvoter.backend.model.Vote;
 
@@ -10,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static tk.djandjiev.lunchvoter.backend.util.JsonUtil.writeIgnoreProps;
 import static tk.djandjiev.lunchvoter.backend.util.RestaurantTestData.*;
 import static tk.djandjiev.lunchvoter.backend.util.UserTestData.*;
 import static tk.djandjiev.lunchvoter.backend.model.AbstractBaseEntity.START_SEQ;
