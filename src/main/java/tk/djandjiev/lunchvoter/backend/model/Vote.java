@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 })
 public class Vote extends AbstractBaseEntity {
 
+    @NotNull
     @Column(name = "vote_date", columnDefinition = "date default current_date")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate voteDate;

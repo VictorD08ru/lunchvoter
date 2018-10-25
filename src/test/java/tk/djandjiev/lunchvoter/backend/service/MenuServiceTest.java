@@ -3,14 +3,13 @@ package tk.djandjiev.lunchvoter.backend.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.dao.DataAccessException;
-import tk.djandjiev.lunchvoter.backend.model.Menu;
-import tk.djandjiev.lunchvoter.backend.to.MenuTO;
-import tk.djandjiev.lunchvoter.backend.util.JpaUtil;
+import tk.djandjiev.lunchvoter.backend.model.MenuItem;
+import tk.djandjiev.lunchvoter.backend.to.MenuItemTO;
 import tk.djandjiev.lunchvoter.backend.util.MenuUtil;
 import tk.djandjiev.lunchvoter.backend.util.exception.ApplicationException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,57 +18,50 @@ import static org.junit.jupiter.api.Assertions.*;
 import static tk.djandjiev.lunchvoter.backend.util.MenuTestData.*;
 import static tk.djandjiev.lunchvoter.backend.util.RestaurantTestData.*;
 
-class MenuServiceTest extends AbstractServiceTest {
+class MenuServiceTest extends AbstractCachedServiceTest {
 
     @Autowired
     private MenuService menuService;
 
-    @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired(required = false)
-    private JpaUtil jpaUtil;
-
     @BeforeEach
+    @Override
     void setUp() throws Exception {
         cacheManager.getCache("menu").clear();
-        if (jpaUtil == null) {
-            jpaUtil.clear2ndLevelHibernateCache();
-        }
+        super.setUp();
     }
 
     @Test
     void createDuplicate() throws Exception {
         assertThrows(DataAccessException.class, () ->
-                menuService.create(new Menu("Борщ", 250), RESTAURANT11_ID));
+                menuService.create(new MenuItem("Борщ", 250, LocalDate.now()), RESTAURANT11_ID));
     }
 
     @Test
     void create() throws Exception {
-        Menu newMenu = new Menu("Вареники", 200);
-        Menu created = menuService.create(newMenu, RESTAURANT11_ID);
-        newMenu.setId(created.getId());
-        List<Menu> expected = new ArrayList<>(R11_MENU);
-        expected.add(newMenu);
-        assertMatch(menuService.getAll(RESTAURANT11_ID), expected);
+        MenuItem newMenuItem = new MenuItem("Вареники", 200, LocalDate.now());
+        MenuItem created = menuService.create(newMenuItem, RESTAURANT11_ID);
+        newMenuItem.setId(created.getId());
+        List<MenuItem> expected = new ArrayList<>(R11_MENU);
+        expected.add(newMenuItem);
+        assertMatch(menuService.getAll(RESTAURANT11_ID, LocalDate.now()), expected);
     }
 
     @Test
     void delete() throws Exception {
-        menuService.delete(R11_MENU2_ID);
-        List<Menu> expected = new ArrayList<>(R11_MENU);
-        expected.remove(R11_MENU2);
-        assertMatch(menuService.getAll(RESTAURANT11_ID), expected);
+        menuService.delete(R11_MENU2_ID, RESTAURANT11_ID);
+        List<MenuItem> expected = new ArrayList<>(R11_MENU);
+        expected.remove(R_11_MENU_ITEM_2);
+        assertMatch(menuService.getAll(RESTAURANT11_ID, LocalDate.now()), expected);
     }
 
     @Test
     void deleteNotFound() throws Exception {
-        assertThrows(ApplicationException.class, () -> menuService.delete(15));
+        assertThrows(ApplicationException.class, () -> menuService.delete(15, RESTAURANT13_ID));
     }
 
     @Test
     void get() throws Exception {
-        assertMatch(menuService.get(R11_MENU1_ID), R11_MENU1);
+        assertMatch(menuService.get(R11_MENU1_ID), R_11_MENU_ITEM_1);
     }
 
     @Test
@@ -79,20 +71,20 @@ class MenuServiceTest extends AbstractServiceTest {
 
     @Test
     void update() throws Exception {
-        MenuTO updated = MenuUtil.getTO(R13_MENU1);
+        MenuItemTO updated = MenuUtil.getTO(R_13_MENU_ITEM_1);
         updated.setDish("Tiny mac");
         updated.setPrice(240);
-        Menu menu = MenuUtil.updateFromTo(new Menu(R13_MENU1), updated);
-        menuService.update(updated);
-        assertMatch(menuService.getAll(RESTAURANT13_ID), Arrays.asList(R13_MENU2, R13_MENU3, R13_MENU4, R13_MENU5, menu));
+        MenuItem menuItem = MenuUtil.updateFromTO(new MenuItem(R_13_MENU_ITEM_1), updated);
+        menuService.update(updated, RESTAURANT13_ID);
+        assertMatch(menuService.getAll(RESTAURANT13_ID, LocalDate.now()), Arrays.asList(R_13_MENU_ITEM_2, R_13_MENU_ITEM_3, R_13_MENU_ITEM_4, R_13_MENU_ITEM_5, menuItem));
     }
 
     @Test
     void getAll() throws Exception {
-        assertMatch(menuService.getAll(RESTAURANT11_ID), R11_MENU);
-        assertMatch(menuService.getAll(RESTAURANT12_ID), R12_MENU);
-        assertMatch(menuService.getAll(RESTAURANT13_ID), R13_MENU);
-        assertMatch(menuService.getAll(RESTAURANT14_ID), R14_MENU);
-        assertMatch(menuService.getAll(RESTAURANT15_ID), R15_MENU);
+        assertMatch(menuService.getAll(RESTAURANT11_ID, LocalDate.now()), R11_MENU);
+        assertMatch(menuService.getAll(RESTAURANT12_ID, LocalDate.now()), R12_MENU);
+        assertMatch(menuService.getAll(RESTAURANT13_ID, LocalDate.now()), R13_MENU);
+        assertMatch(menuService.getAll(RESTAURANT14_ID, LocalDate.now()), R14_MENU);
+        assertMatch(menuService.getAll(RESTAURANT15_ID, LocalDate.now()), R15_MENU);
     }
 }

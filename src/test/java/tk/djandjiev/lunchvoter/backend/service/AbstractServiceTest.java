@@ -20,9 +20,6 @@ import static tk.djandjiev.lunchvoter.backend.util.ValidationUtil.getRootCause;
 @ExtendWith(TimingExtension.class)
 abstract class AbstractServiceTest {
 
-    @Autowired
-    private Environment env;
-
     //  Check root cause in JUnit: https://github.com/junit-team/junit4/pull/778
     <T extends Throwable> void validateRootCause(Runnable runnable, Class<T> exceptionClass) {
         assertThrows(exceptionClass, () -> {

@@ -1,6 +1,7 @@
 package tk.djandjiev.lunchvoter.backend.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -15,10 +16,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static tk.djandjiev.lunchvoter.backend.util.RestaurantTestData.*;
 
-class RestaurantServiceTest extends AbstractServiceTest {
+class RestaurantServiceTest extends AbstractCachedServiceTest {
 
     @Autowired
     private RestaurantService rService;
+
+    @BeforeEach
+    @Override
+    void setUp() throws Exception {
+        cacheManager.getCache("restaurants").clear();
+        super.setUp();
+    }
 
     @Test
     void create() throws Exception {

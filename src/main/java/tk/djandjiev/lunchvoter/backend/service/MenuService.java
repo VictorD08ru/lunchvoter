@@ -1,18 +1,19 @@
 package tk.djandjiev.lunchvoter.backend.service;
 
-import tk.djandjiev.lunchvoter.backend.model.Menu;
-import tk.djandjiev.lunchvoter.backend.to.MenuTO;
+import tk.djandjiev.lunchvoter.backend.model.MenuItem;
+import tk.djandjiev.lunchvoter.backend.to.MenuItemTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface MenuService {
-    Menu create(Menu menu, int restaurantId);
+    MenuItem create(MenuItem menuItem, int restaurantId);
 
-    void delete(int id);
+    void delete(int id, int restaurantId);
 
-    Menu get(int id);
+    MenuItem get(int id);
 
-    void update(MenuTO menuTO);
+    void update(MenuItemTO menuItemTO, int restaurantId);
 
-    List<Menu> getAll(int restaurantId);
+    List<MenuItem> getAll(int restaurantId, LocalDate cookingDate);
 }

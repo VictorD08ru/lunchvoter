@@ -2,16 +2,19 @@ package tk.djandjiev.lunchvoter.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
-import tk.djandjiev.lunchvoter.backend.model.Menu;
+import tk.djandjiev.lunchvoter.backend.model.MenuItem;
 import tk.djandjiev.lunchvoter.backend.repository.MenuRepository;
 import tk.djandjiev.lunchvoter.backend.repository.RestaurantRepository;
-import tk.djandjiev.lunchvoter.backend.to.MenuTO;
+import tk.djandjiev.lunchvoter.backend.to.MenuItemTO;
 import tk.djandjiev.lunchvoter.backend.util.MenuUtil;
+import tk.djandjiev.lunchvoter.backend.util.exception.IllegalRequestDataException;
 import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,23 +31,29 @@ public class MenuServiceImpl implements MenuService {
     @CacheEvict(value = "menu", allEntries = true)
     @Override
     @Transactional
-    public Menu create(Menu menu, int restaurantId) {
-        Assert.notNull(menu, "menu must not be null");
-        if (!menu.isNew() && Objects.isNull(menu.getId())) {
+    public MenuItem create(MenuItem menuItem, int restaurantId) {
+        Assert.notNull(menuItem, "menuItem must not be null");
+        if (!menuItem.isNew() && Objects.isNull(menuItem.getId())) {
             return null;
         }
-        menu.setRestaurant(restaurantRepository.getOne(restaurantId));
-        return menuRepository.save(menu);
+        menuItem.setRestaurant(restaurantRepository.getOne(restaurantId));
+        return menuRepository.save(menuItem);
     }
 
     @CacheEvict(value = "menu", allEntries = true)
     @Override
-    public void delete(int id) {
-        checkNotFoundWithId(menuRepository.delete(id) != 0, id);
+    @Transactional
+    public void delete(int id, int restaurantId) {
+        MenuItem item = get(id);
+        if (item.getRestaurant().getId().equals(restaurantId)) {
+           menuRepository.delete(id);
+        } else {
+            throw new IllegalRequestDataException(item + " is not from restaurant " + restaurantId);
+        }
     }
 
     @Override
-    public Menu get(int id) {
+    public MenuItem get(int id) {
         return menuRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Not found entity with id=" + id));
     }
@@ -52,14 +61,15 @@ public class MenuServiceImpl implements MenuService {
     @CacheEvict(value = "menu", allEntries = true)
     @Override
     @Transactional
-    public void update(MenuTO menuTO) {
-        Assert.notNull(menuTO, "menu must not be null");
-        Menu menu = MenuUtil.updateFromTo(get(menuTO.getId()), menuTO);
-        checkNotFoundWithId(menuRepository.save(menu), menu.getId());
+    public void update(MenuItemTO menuItemTO, int restaurantId) {
+        Assert.notNull(menuItemTO, "menuItem must not be null");
+        MenuItem menuItem = MenuUtil.updateFromTO(get(menuItemTO.getId()), menuItemTO);
+        checkNotFoundWithId(menuRepository.save(menuItem), menuItem.getId());
     }
 
+    @Cacheable("menu")
     @Override
-    public List<Menu> getAll(int restaurantId) {
-        return menuRepository.findAllByRestaurantId(restaurantId);
+    public List<MenuItem> getAll(int restaurantId, LocalDate cookingDate) {
+        return menuRepository.getAllByDate(restaurantId, cookingDate);
     }
 }

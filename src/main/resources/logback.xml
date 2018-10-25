@@ -5,7 +5,7 @@
     <jmxConfigurator/>
 
     <appender name="file" class="ch.qos.logback.core.FileAppender">
-        <file>${LUNCHVOTER_ROOT}/log/lunchvoter.log</file>
+        <file>${user.home}/lunchvoter.log</file>
 
         <encoder>
             <charset>UTF-8</charset>

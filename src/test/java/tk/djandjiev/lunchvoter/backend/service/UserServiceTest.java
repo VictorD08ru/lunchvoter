@@ -22,21 +22,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static tk.djandjiev.lunchvoter.backend.util.UserTestData.*;
 
-class UserServiceTest extends AbstractServiceTest {
+class UserServiceTest extends AbstractCachedServiceTest {
 
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private CacheManager cacheManager;
-
-    @Autowired
-    private JpaUtil jpaUtil;
-
     @BeforeEach
+    @Override
     void setUp() throws Exception {
         cacheManager.getCache("users").clear();
-        jpaUtil.clear2ndLevelHibernateCache();
+        super.setUp();
     }
 
     @Test

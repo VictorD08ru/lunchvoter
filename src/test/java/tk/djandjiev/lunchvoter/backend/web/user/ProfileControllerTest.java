@@ -1,5 +1,6 @@
 package tk.djandjiev.lunchvoter.backend.web.user;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Propagation;
@@ -10,6 +11,7 @@ import tk.djandjiev.lunchvoter.backend.util.JsonUtil;
 import tk.djandjiev.lunchvoter.backend.util.TestUtil;
 import tk.djandjiev.lunchvoter.backend.util.UserUtil;
 import tk.djandjiev.lunchvoter.backend.util.exception.ErrorType;
+import tk.djandjiev.lunchvoter.backend.web.AbstractCachedControllerTest;
 import tk.djandjiev.lunchvoter.backend.web.AbstractControllerTest;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -21,7 +23,7 @@ import static tk.djandjiev.lunchvoter.backend.util.UserTestData.*;
 import static tk.djandjiev.lunchvoter.backend.web.ExceptionInfoHandler.*;
 import static tk.djandjiev.lunchvoter.backend.web.user.ProfileController.REST_URL;
 
-class ProfileControllerTest extends AbstractControllerTest {
+class ProfileControllerTest extends AbstractCachedControllerTest {
 
     @Test
     void testGet() throws Exception {
@@ -32,6 +34,14 @@ class ProfileControllerTest extends AbstractControllerTest {
                         .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                         .andExpect(contentJson(USER1))
         );
+    }
+
+    @BeforeEach
+    void setUp() {
+        cacheManager.getCache("users").clear();
+        if (jpaUtil == null) {
+            jpaUtil.clear2ndLevelHibernateCache();
+        }
     }
 
     @Test

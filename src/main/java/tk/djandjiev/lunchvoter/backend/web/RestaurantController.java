@@ -80,6 +80,7 @@ public class RestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    //users can see which restaurant is leader
     @GetMapping("/{id}/votes")
     public List<VoteTO> getVotes(@PathVariable("id") int id) {
         return VoteUtil.getTOList(voteService.getAll(id));

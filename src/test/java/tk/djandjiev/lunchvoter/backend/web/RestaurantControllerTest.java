@@ -1,5 +1,6 @@
 package tk.djandjiev.lunchvoter.backend.web;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -24,7 +25,7 @@ import static tk.djandjiev.lunchvoter.backend.util.TestUtil.userHttpBasic;
 import static tk.djandjiev.lunchvoter.backend.util.UserTestData.ADMIN;
 import static tk.djandjiev.lunchvoter.backend.util.UserTestData.USER1;
 
-class RestaurantControllerTest extends AbstractControllerTest {
+class RestaurantControllerTest extends AbstractCachedControllerTest {
     static final String REST_URL = RestaurantController.RESTAURANT_URL + "/";
 
     @Autowired
@@ -32,6 +33,13 @@ class RestaurantControllerTest extends AbstractControllerTest {
 
     @Autowired
     private VoteService voteService;
+
+    @BeforeEach
+    @Override
+    void setUp() {
+        cacheManager.getCache("restaurants").clear();
+        super.setUp();
+    }
 
     @Test
     void testGet() throws Exception {

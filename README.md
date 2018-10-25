@@ -30,8 +30,7 @@ user8@yandex.ru:password8
 user9@yandex.ru:password9`
 
 
-Create field in your OS environment (or profile file) named 'LUNCHVOTER_ROOT' which value path from root to this project's directory (for example, "$HOME/projects/lunchvoter" or "C:/projects/lunchvoter").
-DBMS and logging depend on LUNCHVOTER_ROOT.
+> This application writes logs to file **lunchvoter.log** in your $HOME directory.
 
 ###CURL requests
 Ilf you are Windows user, please use bash console (like Git bash)
@@ -100,19 +99,21 @@ Ilf you are Windows user, please use bash console (like Git bash)
 
 `curl -v -u user3@yandex.ru:password3 http://localhost:8080/lunchvoter/restaurants/10011/menu/10016`
 
-**Any user can update menu item of restaurant**
+**Admin can update menu item of restaurant**
 
-`curl -v -X PUT -d '{"id": 10016, "dish": "Borsch", "price": 175}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10011/menu/10016`
+>NOTE: add cooking date to construct fresh menu
+
+`curl -v -X PUT -d '{"id": 10016, "dish": "Borsch",  "price": 175, "cookingDate": "2018-10-25"}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10011/menu/10016`
 
 **Admin can create menu item of restaurant**
 
-`curl -v -X POST -d '{"id": null, "dish": "Pelmen", "price": 275}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10011/menu`
+`curl -v -X POST -d '{"id": null, "dish": "Pelmen", "price": 275, "cookingDate": "2018-10-25"}' -H 'Content-Type:application/json;charset=UTF-8' -u admin@gmail.com:admin http://localhost:8080/lunchvoter/restaurants/10011/menu`
 
 **Any user can get his vote today**
 
 `curl -v -u user1@yandex.ru:password1 http://localhost:8080/lunchvoter/profile/votes`
 
-**Any user can delete his vote today**
+**Any user can delete his vote today (if now is earlier than 11:00 AM)**
 
 `curl -v -X DELETE -u user4@yandex.ru:password4 http://localhost:8080/lunchvoter/profile/votes/10045`
 
@@ -122,7 +123,7 @@ Ilf you are Windows user, please use bash console (like Git bash)
 
 `curl -v -X PUT -d '{"id": 10042, "voteDate": "2018-10-07", "restaurantId": 10013}' -H 'Content-Type:application/json;charset=UTF-8' -u user1@yandex.ru:password1 http://localhost:8080/lunchvoter/profile/votes/10042`
 
-**Any user can create vote today (vote for restaurant)**
+**Any user can create vote today (vote for restaurant if now is earlier than 11:00 AM)**
 
 >User0 hasn't voted yet today
 

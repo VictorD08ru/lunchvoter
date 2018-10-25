@@ -1,7 +1,7 @@
 package tk.djandjiev.lunchvoter.backend.util;
 
-import tk.djandjiev.lunchvoter.backend.model.Menu;
-import tk.djandjiev.lunchvoter.backend.to.MenuTO;
+import tk.djandjiev.lunchvoter.backend.model.MenuItem;
+import tk.djandjiev.lunchvoter.backend.to.MenuItemTO;
 
 import java.util.Collection;
 import java.util.List;
@@ -11,17 +11,18 @@ public class MenuUtil {
 
     private MenuUtil() {}
 
-    public static MenuTO getTO(Menu menu) {
-        return new MenuTO(menu.getId(), menu.getDish(), menu.getPrice());
+    public static MenuItemTO getTO(MenuItem menuItem) {
+        return new MenuItemTO(menuItem.getId(), menuItem.getDish(), menuItem.getPrice(), menuItem.getCookingDate());
     }
 
-    public static Menu updateFromTo(Menu menu, MenuTO menuTO) {
-        menu.setDish(menuTO.getDish());
-        menu.setPrice(menuTO.getPrice());
-        return menu;
+    public static MenuItem updateFromTO(MenuItem menuItem, MenuItemTO menuItemTO) {
+        menuItem.setDish(menuItemTO.getDish());
+        menuItem.setPrice(menuItemTO.getPrice());
+        menuItem.setCookingDate(menuItemTO.getCookingDate());
+        return menuItem;
     }
 
-    public static List<MenuTO> getTOList (Collection<Menu> menuList) {
-        return menuList.stream().map(MenuUtil::getTO).collect(Collectors.toList());
+    public static List<MenuItemTO> getTOList (Collection<MenuItem> menu) {
+        return menu.stream().map(MenuUtil::getTO).collect(Collectors.toList());
     }
 }

@@ -14,6 +14,7 @@ import tk.djandjiev.lunchvoter.backend.to.VoteTO;
 import tk.djandjiev.lunchvoter.backend.util.VoteUtil;
 import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static tk.djandjiev.lunchvoter.backend.util.ValidationUtil.checkNotFoundWithId;
@@ -45,8 +46,8 @@ public class VoteServiceImpl implements VoteService {
     }
 
     @Override
-    public Vote get(int userId) {
-        return voteRepository.get(userId)
+    public Vote getForDate(int userId, LocalDate date) {
+        return voteRepository.getForDate(userId, date)
                 .orElseThrow(() -> new NotFoundException(Integer.toString(userId)));
     }
 

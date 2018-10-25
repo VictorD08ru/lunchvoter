@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import tk.djandjiev.lunchvoter.backend.model.Vote;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +23,8 @@ public interface VoteRepository extends JpaRepository<Vote, Integer> {
     @Transactional
     Vote save(Vote vote);
 
-    @Query("SELECT v FROM Vote v WHERE v.user.id=:userId AND v.voteDate=CURRENT_DATE")
-    Optional<Vote> get(@Param("userId") Integer userId);
+    @Query("SELECT v FROM Vote v WHERE v.user.id=:userId AND v.voteDate=:voteDate")
+    Optional<Vote> getForDate(@Param("userId") Integer userId, @Param("voteDate") LocalDate voteDate);
 
     @Query("SELECT v FROM Vote v WHERE v.restaurant.id=:restaurantId AND v.voteDate=CURRENT_DATE")
     List<Vote> getAllForRestaurant(@Param("restaurantId") Integer restaurantId);

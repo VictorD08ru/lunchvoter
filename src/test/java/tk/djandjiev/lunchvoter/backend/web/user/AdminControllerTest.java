@@ -1,5 +1,6 @@
 package tk.djandjiev.lunchvoter.backend.web.user;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -11,7 +12,7 @@ import tk.djandjiev.lunchvoter.backend.util.JsonUtil;
 import tk.djandjiev.lunchvoter.backend.util.TestUtil;
 import tk.djandjiev.lunchvoter.backend.util.UserTestData;
 import tk.djandjiev.lunchvoter.backend.util.exception.ErrorType;
-import tk.djandjiev.lunchvoter.backend.web.AbstractControllerTest;
+import tk.djandjiev.lunchvoter.backend.web.AbstractCachedControllerTest;
 
 import java.util.Collections;
 
@@ -23,9 +24,17 @@ import static tk.djandjiev.lunchvoter.backend.util.TestUtil.userHttpBasic;
 import static tk.djandjiev.lunchvoter.backend.util.UserTestData.*;
 import static tk.djandjiev.lunchvoter.backend.web.ExceptionInfoHandler.EXCEPTION_DUPLICATE_EMAIL;
 
-class AdminControllerTest extends AbstractControllerTest {
+class AdminControllerTest extends AbstractCachedControllerTest {
 
     private static final String REST_URL = AdminController.REST_URL + '/';
+
+    @BeforeEach
+    void setUp() {
+        cacheManager.getCache("users").clear();
+        if (jpaUtil == null) {
+            jpaUtil.clear2ndLevelHibernateCache();
+        }
+    }
 
     @Test
     void testGetAll() throws Exception {

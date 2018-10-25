@@ -1,6 +1,7 @@
 package tk.djandjiev.lunchvoter.backend.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -12,6 +13,7 @@ import tk.djandjiev.lunchvoter.backend.util.exception.ApplicationException;
 import tk.djandjiev.lunchvoter.backend.util.exception.NotFoundException;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,12 +65,12 @@ class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void get() throws Exception {
-        assertMatch(voteService.get(ADMIN_ID), VOTE1);
+        assertMatch(voteService.getForDate(ADMIN_ID, LocalDate.now()), VOTE1);
     }
 
     @Test
     void getNotFound() throws Exception {
-        Assertions.assertThrows(NotFoundException.class, () -> voteService.get(USER0_ID));
+        Assertions.assertThrows(NotFoundException.class, () -> voteService.getForDate(USER0_ID, LocalDate.now()));
     }
 
     @Test

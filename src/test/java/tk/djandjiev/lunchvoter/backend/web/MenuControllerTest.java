@@ -1,16 +1,18 @@
 package tk.djandjiev.lunchvoter.backend.web;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import tk.djandjiev.lunchvoter.backend.model.Menu;
+import tk.djandjiev.lunchvoter.backend.model.MenuItem;
 import tk.djandjiev.lunchvoter.backend.service.MenuService;
-import tk.djandjiev.lunchvoter.backend.to.MenuTO;
+import tk.djandjiev.lunchvoter.backend.to.MenuItemTO;
 import tk.djandjiev.lunchvoter.backend.util.JsonUtil;
 import tk.djandjiev.lunchvoter.backend.util.MenuUtil;
 import tk.djandjiev.lunchvoter.backend.util.TestUtil;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,10 +32,17 @@ import static tk.djandjiev.lunchvoter.backend.util.UserTestData.USER0;
 import static tk.djandjiev.lunchvoter.backend.util.UserTestData.USER1;
 import static tk.djandjiev.lunchvoter.backend.web.RestaurantControllerTest.REST_URL;
 
-class MenuControllerTest extends AbstractControllerTest {
+class MenuControllerTest extends AbstractCachedControllerTest {
 
     @Autowired
     private MenuService menuService;
+
+    @BeforeEach
+    @Override
+    void setUp() {
+        cacheManager.getCache("menu").clear();
+        super.setUp();
+    }
 
     @Test
     void testDelete() throws Exception {
@@ -41,17 +50,17 @@ class MenuControllerTest extends AbstractControllerTest {
                 .with(userAuth(ADMIN)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        List<Menu> menuList = new ArrayList<>(R15_MENU);
-        menuList.remove(R15_MENU1);
-        assertMatch(menuService.getAll(RESTAURANT15_ID), menuList);
+        List<MenuItem> menu = new ArrayList<>(R15_MENU);
+        menu.remove(R_15_MENU_ITEM_1);
+        assertMatch(menuService.getAll(RESTAURANT15_ID, LocalDate.now()), menu);
     }
 
     @Test
     void testUpdate() throws Exception {
-        MenuTO updatedTO = MenuUtil.getTO(R13_MENU1);
+        MenuItemTO updatedTO = MenuUtil.getTO(R_13_MENU_ITEM_1);
         updatedTO.setDish("Tiny mac");
         updatedTO.setPrice(240);
-        Menu updated = MenuUtil.updateFromTo(new Menu(R13_MENU1), updatedTO);
+        MenuItem updated = MenuUtil.updateFromTO(new MenuItem(R_13_MENU_ITEM_1), updatedTO);
 
         TestUtil.print(mockMvc.perform(put(REST_URL + RESTAURANT13_ID + "/menu/" + R13_MENU1_ID)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -64,7 +73,7 @@ class MenuControllerTest extends AbstractControllerTest {
 
     @Test
     void testCreate() throws Exception {
-        Menu created = new Menu("Вареники", 200);
+        MenuItem created = new MenuItem("Вареники", 200, LocalDate.now());
 
         ResultActions action = TestUtil.print(mockMvc.perform(post(REST_URL + RESTAURANT11_ID + "/menu")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -73,12 +82,12 @@ class MenuControllerTest extends AbstractControllerTest {
                 .andExpect(status().isCreated())
         );
 
-        Menu returned = readFromJson(action, Menu.class);
+        MenuItem returned = readFromJson(action, MenuItem.class);
         created.setId(returned.getId());
         assertMatch(returned, created);
-        List<Menu> expected = new ArrayList<>(R11_MENU);
+        List<MenuItem> expected = new ArrayList<>(R11_MENU);
         expected.add(created);
-        assertMatch(menuService.getAll(RESTAURANT11_ID), expected);
+        assertMatch(menuService.getAll(RESTAURANT11_ID, LocalDate.now()), expected);
     }
 
     @Test
@@ -87,7 +96,7 @@ class MenuControllerTest extends AbstractControllerTest {
                 .with(userAuth(USER1)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(TestUtil.contentJson(MenuUtil.getTO(R11_MENU2))));
+                .andExpect(TestUtil.contentJson(MenuUtil.getTO(R_11_MENU_ITEM_2))));
     }
 
     @Test

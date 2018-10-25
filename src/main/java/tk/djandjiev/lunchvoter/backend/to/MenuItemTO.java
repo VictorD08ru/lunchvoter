@@ -2,13 +2,15 @@ package tk.djandjiev.lunchvoter.backend.to;
 
 import org.hibernate.validator.constraints.Range;
 import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDate;
 
-public class MenuTO extends BaseTO implements Serializable {
+public class MenuItemTO extends BaseTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @NotBlank
@@ -20,13 +22,21 @@ public class MenuTO extends BaseTO implements Serializable {
     @Range(min = 5, max = 2_000_000)
     private Integer price;
 
-    public MenuTO() {
+    @NotNull
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate cookingDate;
+
+    public MenuItemTO() {
     }
 
-    public MenuTO(Integer id, @NotBlank @Size(min = 2, max = 100) @SafeHtml String dish, @NotNull @Range(min = 5, max = 2_000_000) Integer price) {
+    public MenuItemTO(Integer id,
+                      @NotBlank @Size(min = 2, max = 100) @SafeHtml String dish,
+                      @NotNull @Range(min = 5, max = 2_000_000) Integer price,
+                      @NotNull LocalDate cookingDate) {
         super(id);
         this.dish = dish;
         this.price = price;
+        this.cookingDate = cookingDate;
     }
 
     public String getDish() {
@@ -43,5 +53,13 @@ public class MenuTO extends BaseTO implements Serializable {
 
     public void setPrice(Integer price) {
         this.price = price;
+    }
+
+    public LocalDate getCookingDate() {
+        return cookingDate;
+    }
+
+    public void setCookingDate(LocalDate cookingDate) {
+        this.cookingDate = cookingDate;
     }
 }

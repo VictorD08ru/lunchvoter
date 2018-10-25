@@ -5,8 +5,6 @@
     <!--http://www.ehcache.org/documentation/3.6/xml.html-->
     <!--http://www.ehcache.org/documentation/3.1/107.html#supplement-jsr-107-configurations-->
 
-    <!--<persistence directory="${LUNCHVOTER_ROOT}/cache-data"/>-->
-
     <cache-template name="expiryCache">
         <expiry>
             <ttl unit="hours">6</ttl>
@@ -22,5 +20,10 @@
     </cache-template>
 
     <cache alias="users" uses-template="singleNonExpiryCache"/>
+    <cache alias="restaurants">
+        <resources>
+            <heap unit="entries">100</heap>
+        </resources>
+    </cache>
     <cache alias="menu" uses-template="expiryCache"/>
 </config>
