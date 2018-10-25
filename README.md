@@ -17,26 +17,16 @@ Each restaurant provides new menu each day.
 
 **login:password**
 
-`admin@gmail.com:admin
-
-user0@yandex.ru:password0
-
-user1@yandex.ru:password1
-
-user2@yandex.ru:password2
-
-user3@yandex.ru:password3
-
-user4@yandex.ru:password4
-
-user5@yandex.ru:password5
-
-user6@yandex.ru:password6
-
-user7@yandex.ru:password7
-
-user8@yandex.ru:password8
-
+`admin@gmail.com:admin 
+user0@yandex.ru:password0 
+user1@yandex.ru:password1 
+user2@yandex.ru:password2 
+user3@yandex.ru:password3 
+user4@yandex.ru:password4 
+user5@yandex.ru:password5 
+user6@yandex.ru:password6 
+user7@yandex.ru:password7 
+user8@yandex.ru:password8 
 user9@yandex.ru:password9`
 
 
