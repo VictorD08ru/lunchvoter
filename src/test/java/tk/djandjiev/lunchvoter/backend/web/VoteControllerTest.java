@@ -55,7 +55,7 @@ class VoteControllerTest extends AbstractControllerTest {
         updated.setRestaurant(RestaurantTestData.RESTAURANT13);
         VoteTO updatedTO = VoteUtil.getTO(updated);
 
-        TestUtil.print(mockMvc.perform(put(REST_URL)
+        TestUtil.print(mockMvc.perform(put(REST_URL+ updated.getId())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(JsonUtil.writeValue(updatedTO))
                 .with(userAuth(USER1)))
